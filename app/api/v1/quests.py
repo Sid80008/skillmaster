@@ -13,7 +13,8 @@ from __future__ import annotations
 
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
+from app.core.rate_limit import limiter
 from sqlalchemy import and_, select
 from sqlalchemy.orm import Session
 
@@ -179,7 +180,9 @@ def abandon_attempt(
     status_code=status.HTTP_201_CREATED,
     summary="Submit multi-dimensional rating for a completed or abandoned quest attempt",
 )
+@limiter.limit("10/minute")
 def post_feedback(
+    request: Request,
     attempt_id: uuid.UUID,
     body: RatingSubmitRequest,
     db: Session = Depends(get_db),

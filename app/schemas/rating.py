@@ -11,9 +11,9 @@ class RatingSubmitRequest(BaseModel):
     difficulty_felt: int | None = Field(default=None, ge=1, le=10)
     would_repeat: Literal["yes", "maybe", "no"]
     deep_dive_interest: int = Field(..., ge=1, le=10)
-    standout_moment: str | None = None
-    friction_notes: str | None = None
-    free_text: str | None = None
+    standout_moment: str | None = Field(default=None, max_length=2000)
+    friction_notes: str | None = Field(default=None, max_length=2000)
+    free_text: str | None = Field(default=None, max_length=2000)
 
 class RatingResponse(BaseModel):
     id: uuid.UUID

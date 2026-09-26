@@ -12,7 +12,8 @@ from __future__ import annotations
 
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
+from app.core.rate_limit import limiter
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db

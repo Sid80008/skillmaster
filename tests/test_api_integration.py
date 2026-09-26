@@ -148,3 +148,57 @@ def test_mix_candidates_forbidden_if_disabled(auth_client):
     res = auth_client.get("/api/v1/mix/candidates")
     # Mix mode is disabled by default
     assert res.status_code == 403
+import pytest
+from fastapi.testclient import TestClient
+from fastapi import status
+from app.main import app
+import time
+
+def test_rating_max_length(auth_client):
+    res = auth_client.post("/api/v1/recommendations/")
+    rec_id = res.json()["id"]
+    skill_id = res.json()["candidates"][0]["skill_id"]
+    
+    auth_client.post(f"/api/v1/recommendations/{rec_id}/present")
+    res = auth_client.post(f"/api/v1/recommendations/{rec_id}/accept", json={"selected_skill_id": skill_id})
+    attempt_id = res.json()["id"]
+    
+    auth_client.post(f"/api/v1/quests/attempts/{attempt_id}/start")
+    auth_client.post(f"/api/v1/quests/attempts/{attempt_id}/complete")
+    
+    oversized = "a" * 2001
+    
+    res = auth_client.post(
+        f"/api/v1/quests/attempts/{attempt_id}/feedback",
+        json={
+            "enjoyment": 5,
+            "curiosity": 5,
+            "would_repeat": "yes",
+            "deep_dive_interest": 5,
+            "standout_moment": oversized
+        }
+    )
+    assert res.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    
+    res2 = auth_client.post(
+        f"/api/v1/quests/attempts/{attempt_id}/feedback",
+        json={
+            "enjoyment": 5,
+            "curiosity": 5,
+            "would_repeat": "yes",
+            "deep_dive_interest": 5,
+            "friction_notes": oversized
+        }
+    )
+    assert res2.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+
+
+def test_auth_rate_limiting(auth_client):
+    client = auth_client
+    # The limit is 10/minute on /token.
+    for _ in range(10):
+        client.post("/api/v1/auth/token", data={"username": "a", "password": "b"})
+    
+    # 11th should fail with 429
+    res = client.post("/api/v1/auth/token", data={"username": "a", "password": "b"})
+    assert res.status_code == status.HTTP_429_TOO_MANY_REQUESTS

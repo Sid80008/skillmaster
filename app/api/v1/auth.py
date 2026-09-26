@@ -8,7 +8,8 @@ PUT  /api/v1/auth/constraints – update the user's hard constraints
 """
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
+from app.core.rate_limit import limiter
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
@@ -40,7 +41,9 @@ router = APIRouter(prefix="/auth", tags=["auth"])
     status_code=status.HTTP_201_CREATED,
     summary="Register a new user account",
 )
+@limiter.limit("5/minute")
 def register(
+    request: Request,
     body: UserRegisterRequest,
     db: Session = Depends(get_db),
 ) -> User:
@@ -55,7 +58,9 @@ def register(
     response_model=TokenResponse,
     summary="Authenticate and receive a JWT access token",
 )
+@limiter.limit("10/minute")
 def login(
+    request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db),
 ) -> dict:
