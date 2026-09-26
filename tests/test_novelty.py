@@ -6,27 +6,23 @@ based on history and catalog relationships — not AI or profile data.
 """
 from __future__ import annotations
 
-import pytest
-from decimal import Decimal
-
+from app.models.catalog import SkillRelationship
 from app.models.recommendation import NoveltyCategory
 from app.services.history_service import ExplorationSummary, get_exploration_summary
 from app.services.novelty_service import (
+    INELIGIBLE_NOVELTY_CATEGORIES,
     classify_novelty,
     is_novelty_eligible,
     novelty_score,
-    INELIGIBLE_NOVELTY_CATEGORIES,
-    ELIGIBLE_NOVELTY_CATEGORIES,
 )
 from tests.conftest import (
-    make_user,
+    make_attempt,
     make_category,
     make_family,
-    make_skill,
     make_quest,
-    make_attempt,
+    make_skill,
+    make_user,
 )
-from app.models.catalog import SkillRelationship
 
 
 class TestNoveltyClassification:

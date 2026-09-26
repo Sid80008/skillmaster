@@ -30,9 +30,6 @@ cooling-off period has passed (managed by the recommendation service).
 """
 from __future__ import annotations
 
-import uuid
-from collections.abc import Set as AbstractSet
-
 from sqlalchemy import and_, select
 from sqlalchemy.orm import Session
 

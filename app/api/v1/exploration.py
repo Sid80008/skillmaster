@@ -4,15 +4,15 @@ Exploration state API.
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends
+from sqlalchemy import select
 from sqlalchemy.orm import Session
-from sqlalchemy import select, and_
 
 from app.core.database import get_db
 from app.core.deps import get_current_user
-from app.models.user import User
 from app.models.catalog import Category
-from app.services.history_service import get_exploration_summary
+from app.models.user import User
 from app.schemas.exploration import ExplorationStateResponse
+from app.services.history_service import get_exploration_summary
 
 router = APIRouter(prefix="/exploration", tags=["exploration"])
 

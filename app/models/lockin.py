@@ -4,10 +4,20 @@ Lock In and Mix candidates.
 from __future__ import annotations
 
 import uuid
-from decimal import Decimal
 from datetime import datetime
+from decimal import Decimal
 
-from sqlalchemy import ForeignKey, Integer, String, Text, Numeric, CheckConstraint, UniqueConstraint, Boolean, DateTime
+from sqlalchemy import (
+    Boolean,
+    CheckConstraint,
+    DateTime,
+    ForeignKey,
+    Integer,
+    Numeric,
+    String,
+    Text,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
 

@@ -1,6 +1,7 @@
-from pydantic import BaseModel
 import uuid
-from datetime import datetime
+
+from pydantic import BaseModel
+
 
 class ChallengeResponse(BaseModel):
     id: uuid.UUID

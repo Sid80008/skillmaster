@@ -10,24 +10,20 @@ Verifies that:
 """
 from __future__ import annotations
 
-import pytest
-
-from app.models.quest import QuestAttemptStatus
 from app.services.history_service import (
     get_exploration_summary,
+    get_recent_experienced_family_ids,
     has_attempted_skill,
     has_completed_skill,
     has_meaningfully_experienced_skill,
-    get_recent_attempts,
-    get_recent_experienced_family_ids,
 )
 from tests.conftest import (
-    make_user,
+    make_attempt,
     make_category,
     make_family,
-    make_skill,
     make_quest,
-    make_attempt,
+    make_skill,
+    make_user,
 )
 
 

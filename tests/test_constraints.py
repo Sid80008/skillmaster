@@ -10,12 +10,8 @@ Verifies that:
 """
 from __future__ import annotations
 
-import pytest
-
-from app.models.user import UserConstraints
 from app.services.constraint_service import check_skill_constraints, filter_eligible_skills
 from tests.conftest import (
-    make_user,
     make_category,
     make_family,
     make_skill,

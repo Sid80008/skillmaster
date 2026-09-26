@@ -2,15 +2,16 @@
 Lock-In service.
 """
 import uuid
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 
-from sqlalchemy import select, and_
+from sqlalchemy import and_, select
 from sqlalchemy.orm import Session
 
+from app.models.catalog import Skill
 from app.models.lockin import LockInSession
 from app.models.user import User
-from app.models.catalog import Skill
 from app.services.exceptions import ConflictError, NotFoundError
+
 
 def activate_lockin(db: Session, user: User, skill_id: uuid.UUID) -> LockInSession:
     # Check if already locked in

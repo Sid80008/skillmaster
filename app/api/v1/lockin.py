@@ -3,7 +3,6 @@ Lock-In API.
 """
 from __future__ import annotations
 
-import uuid
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -11,9 +10,9 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.deps import get_current_user
 from app.models.user import User
-from app.schemas.lockin import LockInSessionResponse, LockInActivateRequest
-from app.services.lockin_service import activate_lockin, get_current_lockin, exit_lockin
+from app.schemas.lockin import LockInActivateRequest, LockInSessionResponse
 from app.services.exceptions import ConflictError, NotFoundError
+from app.services.lockin_service import activate_lockin, exit_lockin, get_current_lockin
 
 router = APIRouter(prefix="/lock-in", tags=["lock-in"])
 

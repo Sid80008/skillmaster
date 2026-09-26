@@ -8,13 +8,13 @@ PUT  /api/v1/auth/constraints – update the user's hard constraints
 """
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, status, Request
-from app.core.rate_limit import limiter
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.deps import get_current_user
+from app.core.rate_limit import limiter
 from app.models.user import User
 from app.schemas.user import (
     ConstraintsRequest,

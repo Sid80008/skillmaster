@@ -32,7 +32,6 @@ from sqlalchemy import (
     String,
     Text,
     UniqueConstraint,
-    func,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -221,6 +220,6 @@ class QuestAttempt(TimestampMixin, Base):
 
 
 # Late imports to break circular refs
-from app.models.catalog import ActivityFamily, Skill  # noqa: E402, F401
-from app.models.feedback import Feedback  # noqa: E402, F401
-from app.models.user import User  # noqa: E402, F401
+from app.models.catalog import ActivityFamily, Skill
+from app.models.feedback import Feedback
+from app.models.user import User

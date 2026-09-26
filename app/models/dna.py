@@ -6,10 +6,18 @@ Stores the underlying extracted traits and broad category affinities of the user
 from __future__ import annotations
 
 import uuid
-from decimal import Decimal
 from datetime import datetime
+from decimal import Decimal
 
-from sqlalchemy import ForeignKey, Integer, String, Numeric, CheckConstraint, UniqueConstraint, DateTime
+from sqlalchemy import (
+    CheckConstraint,
+    DateTime,
+    ForeignKey,
+    Integer,
+    Numeric,
+    String,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
@@ -71,4 +79,4 @@ class UserCategoryProfile(TimestampMixin, Base):
         return self.category.name if self.category else None
 
 # Late imports to break circular refs
-from app.models.catalog import Category  # noqa: E402, F401
+from app.models.catalog import Category

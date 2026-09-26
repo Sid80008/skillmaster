@@ -268,6 +268,6 @@ class RecommendationCandidate(TimestampMixin, Base):
 
 
 # Late imports
-from app.models.catalog import Skill  # noqa: E402, F401
-from app.models.quest import QuestAttempt  # noqa: E402, F401
-from app.models.user import User  # noqa: E402, F401
+from app.models.catalog import Skill
+from app.models.quest import QuestAttempt
+from app.models.user import User

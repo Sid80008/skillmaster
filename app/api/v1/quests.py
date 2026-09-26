@@ -13,17 +13,17 @@ from __future__ import annotations
 
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException, status, Request
-from app.core.rate_limit import limiter
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy import and_, select
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.deps import get_current_user
+from app.core.rate_limit import limiter
 from app.models.quest import QuestAttempt, QuestAttemptStatus
 from app.models.user import User
-from app.schemas.rating import RatingResponse, RatingSubmitRequest
 from app.schemas.quest import AbandonAttemptRequest, QuestAttemptResponse
+from app.schemas.rating import RatingResponse, RatingSubmitRequest
 from app.services.exceptions import (
     ConflictError,
     ForbiddenError,
@@ -31,7 +31,6 @@ from app.services.exceptions import (
     NotFoundError,
     ValidationError,
 )
-from app.services.feedback_service import get_feedback_for_attempt, submit_feedback
 from app.services.recommendation_service import (
     abandon_quest_attempt,
     complete_quest_attempt,
@@ -243,8 +242,8 @@ def get_attempt_challenge(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> object:
-    from app.schemas.challenge import ChallengeResponse
     from app.models.challenge import Challenge
+    from app.schemas.challenge import ChallengeResponse
     from app.services.recommendation_service import _get_attempt_for_user
     try:
         attempt = _get_attempt_for_user(db, attempt_id=attempt_id, user=current_user)

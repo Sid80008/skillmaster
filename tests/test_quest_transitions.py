@@ -12,9 +12,15 @@ import pytest
 from app.models.quest import (
     QuestAttemptStatus,
     is_valid_quest_attempt_transition,
-    QUEST_ATTEMPT_TRANSITIONS,
 )
-from tests.conftest import make_user, make_category, make_family, make_skill, make_quest, make_attempt
+from tests.conftest import (
+    make_attempt,
+    make_category,
+    make_family,
+    make_quest,
+    make_skill,
+    make_user,
+)
 
 
 class TestQuestAttemptTransitionLogic:
@@ -106,8 +112,8 @@ class TestQuestAttemptServiceTransitions:
         quest = make_quest(db, skill=skill)
         attempt = make_attempt(db, user=user, skill=skill, quest=quest, status="active")
 
-        from app.services.recommendation_service import start_quest_attempt
         from app.services.exceptions import InvalidTransitionError
+        from app.services.recommendation_service import start_quest_attempt
         with pytest.raises(InvalidTransitionError):
             start_quest_attempt(db, attempt_id=attempt.id, user=user)
 
@@ -132,8 +138,8 @@ class TestQuestAttemptServiceTransitions:
         quest = make_quest(db, skill=skill)
         attempt = make_attempt(db, user=user, skill=skill, quest=quest, status="pending")
 
-        from app.services.recommendation_service import complete_quest_attempt
         from app.services.exceptions import InvalidTransitionError
+        from app.services.recommendation_service import complete_quest_attempt
         with pytest.raises(InvalidTransitionError):
             complete_quest_attempt(db, attempt_id=attempt.id, user=user)
 
@@ -161,8 +167,8 @@ class TestQuestAttemptServiceTransitions:
         quest = make_quest(db, skill=skill)
         attempt = make_attempt(db, user=user, skill=skill, quest=quest, status="completed")
 
-        from app.services.recommendation_service import abandon_quest_attempt
         from app.services.exceptions import InvalidTransitionError
+        from app.services.recommendation_service import abandon_quest_attempt
         with pytest.raises(InvalidTransitionError):
             abandon_quest_attempt(db, attempt_id=attempt.id, reason=None, user=user)
 
@@ -174,7 +180,7 @@ class TestQuestAttemptServiceTransitions:
         quest = make_quest(db, skill=skill)
         attempt = make_attempt(db, user=user, skill=skill, quest=quest, status="completed")
 
-        from app.services.recommendation_service import complete_quest_attempt
         from app.services.exceptions import InvalidTransitionError
+        from app.services.recommendation_service import complete_quest_attempt
         with pytest.raises(InvalidTransitionError):
             complete_quest_attempt(db, attempt_id=attempt.id, user=user)

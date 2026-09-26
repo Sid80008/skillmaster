@@ -31,13 +31,16 @@ from sqlalchemy.orm import Session
 from app.core.config import get_settings
 from app.core.logging import get_logger
 from app.models.catalog import Skill
-from app.models.quest import Quest, QuestAttempt, QuestAttemptStatus, is_valid_quest_attempt_transition
+from app.models.quest import (
+    Quest,
+    QuestAttempt,
+    QuestAttemptStatus,
+)
 from app.models.recommendation import (
     NoveltyCategory,
     Recommendation,
     RecommendationCandidate,
     RecommendationStatus,
-    is_valid_recommendation_transition,
 )
 from app.models.user import User
 from app.services.constraint_service import check_skill_constraints, filter_eligible_skills
@@ -53,7 +56,6 @@ from app.services.history_service import (
     get_recent_experienced_family_ids,
 )
 from app.services.novelty_service import (
-    INELIGIBLE_NOVELTY_CATEGORIES,
     classify_novelty,
     is_novelty_eligible,
     novelty_score,
@@ -100,7 +102,7 @@ def _generate_candidates(
 
     # Step 1: load active skills
     all_skills: list[Skill] = (
-        db.execute(select(Skill).where(Skill.is_active == True))  # noqa: E712
+        db.execute(select(Skill).where(Skill.is_active == True))
         .scalars()
         .all()
     )
@@ -319,7 +321,7 @@ def accept_recommendation(
     # Find or create the Quest for this skill
     quest = db.execute(
         select(Quest).where(
-            and_(Quest.skill_id == skill.id, Quest.is_active == True)  # noqa: E712
+            and_(Quest.skill_id == skill.id, Quest.is_active == True)
         ).order_by(Quest.catalog_version.desc()).limit(1)
     ).scalar_one_or_none()
     if quest is None:

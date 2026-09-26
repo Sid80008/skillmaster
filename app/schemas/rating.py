@@ -1,8 +1,10 @@
-from pydantic import BaseModel, Field
 import uuid
-from decimal import Decimal
 from datetime import datetime
+from decimal import Decimal
 from typing import Literal
+
+from pydantic import BaseModel, Field
+
 
 class RatingSubmitRequest(BaseModel):
     pre_interest: int | None = Field(default=None, ge=1, le=10)

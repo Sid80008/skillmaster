@@ -3,15 +3,14 @@ Mix Mode service.
 
 Detects strong intersecting interests and creates MixCandidate recommendations.
 """
-import uuid
 from decimal import Decimal
 
 from sqlalchemy import and_, select
 from sqlalchemy.orm import Session
 
-from app.models.rating import Rating
-from app.models.lockin import MixCandidate
 from app.models.catalog import Skill
+from app.models.lockin import MixCandidate
+from app.models.rating import Rating
 from app.models.user import User
 
 

@@ -1,10 +1,11 @@
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
-from app.main import app
+
 from app.core.database import get_db
-from app.models.catalog import Category, ActivityFamily, Skill
-from app.models.user import UserConstraints
+from app.main import app
+from app.models.catalog import ActivityFamily, Category, Skill
+
 
 def override_get_db(db: Session):
     def _override():
@@ -36,8 +37,8 @@ def auth_client(db: Session):
 
     email = f"test_{uid}@example.com"
     # Create user directly
-    from app.models.user import User
     from app.core.security import create_access_token
+    from app.models.user import User
     user = User(email=email, username=f"testuser_{uid}", hashed_password="fake_hashed_password")
     db.add(user)
     db.flush()
@@ -148,11 +149,10 @@ def test_mix_candidates_forbidden_if_disabled(auth_client):
     res = auth_client.get("/api/v1/mix/candidates")
     # Mix mode is disabled by default
     assert res.status_code == 403
+
 import pytest
-from fastapi.testclient import TestClient
 from fastapi import status
-from app.main import app
-import time
+
 
 def test_rating_max_length(auth_client):
     res = auth_client.post("/api/v1/recommendations/")

@@ -14,25 +14,21 @@ Isolation strategy
 from __future__ import annotations
 
 import uuid
+from collections.abc import Generator
 from decimal import Decimal
-from typing import Generator
 
 import pytest
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import Session, sessionmaker
 
-from app.core.database import Base
 # Import all models to register them with Base.metadata
 import app.models  # noqa: F401
+from app.core.database import Base
 from app.models.catalog import (
     ActivityFamily,
     Category,
-    Characteristic,
     Skill,
-    SkillCharacteristic,
-    SkillRelationship,
 )
-from app.models.feedback import Feedback
 from app.models.quest import Quest, QuestAttempt, QuestAttemptStatus
 from app.models.recommendation import (
     NoveltyCategory,
@@ -40,7 +36,7 @@ from app.models.recommendation import (
     RecommendationCandidate,
     RecommendationStatus,
 )
-from app.models.user import User, UserConstraints
+from app.models.user import User
 
 # ── Engine ────────────────────────────────────────────────────────────────────
 

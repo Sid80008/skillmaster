@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import uuid
 
-from sqlalchemy import Boolean, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import Boolean, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
@@ -127,6 +127,6 @@ class UserConstraints(TimestampMixin, Base):
 
 # Avoid circular-import issues with forward references – resolved by Python
 # at class instantiation time when all models are loaded.
-from app.models.quest import QuestAttempt  # noqa: E402, F401
-from app.models.recommendation import Recommendation  # noqa: E402, F401
-from app.models.feedback import Feedback  # noqa: E402, F401
+from app.models.feedback import Feedback
+from app.models.quest import QuestAttempt
+from app.models.recommendation import Recommendation

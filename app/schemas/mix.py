@@ -1,6 +1,8 @@
-from pydantic import BaseModel
 import uuid
 from decimal import Decimal
+
+from pydantic import BaseModel
+
 
 class MixCandidateResponse(BaseModel):
     id: uuid.UUID

@@ -15,14 +15,13 @@ This service answers the deterministic questions:
 from __future__ import annotations
 
 import uuid
-from datetime import UTC, datetime, timedelta
 from typing import NamedTuple
 
 from sqlalchemy import and_, select
 from sqlalchemy.orm import Session
 
 from app.models.quest import QuestAttempt, QuestAttemptStatus
-from app.models.recommendation import Recommendation, RecommendationStatus
+from app.models.recommendation import Recommendation
 
 
 class ExplorationSummary(NamedTuple):

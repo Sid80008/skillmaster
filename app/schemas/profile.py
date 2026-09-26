@@ -1,7 +1,9 @@
-from pydantic import BaseModel
 import uuid
-from decimal import Decimal
 from datetime import datetime
+from decimal import Decimal
+
+from pydantic import BaseModel
+
 
 class SkillDNAResponse(BaseModel):
     characteristic_slug: str
@@ -16,9 +18,6 @@ class UserCategoryProfileResponse(BaseModel):
     category_id: uuid.UUID
     category_name: str | None = None
     exposure_count: int
-    affinity_score: Decimal
-    fatigue_level: Decimal
-    last_experienced_at: datetime | None
     affinity_score: Decimal
     fatigue_level: Decimal
     last_experienced_at: datetime | None

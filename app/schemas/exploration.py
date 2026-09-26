@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class ExplorationStateResponse(BaseModel):
     total_completed: int
     total_abandoned: int

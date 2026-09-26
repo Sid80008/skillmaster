@@ -1,9 +1,16 @@
-import pytest
+from app.models.dna import SkillDNA, UserCategoryProfile
+from app.services.history_service import get_exploration_summary
 from app.services.rating_service import submit_rating
 from app.services.recommendation_service import _generate_candidates
-from app.services.history_service import get_exploration_summary
-from app.models.dna import UserCategoryProfile, SkillDNA
-from tests.conftest import make_user, make_category, make_family, make_skill, make_quest, make_attempt
+from tests.conftest import (
+    make_attempt,
+    make_category,
+    make_family,
+    make_quest,
+    make_skill,
+    make_user,
+)
+
 
 def test_rating_submission_updates_fatigue_and_dna(db):
     user = make_user(db)

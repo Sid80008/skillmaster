@@ -10,14 +10,12 @@ from app.models.recommendation import (
     is_valid_recommendation_transition,
 )
 from tests.conftest import (
-    make_user,
+    make_candidate,
     make_category,
     make_family,
-    make_skill,
     make_recommendation,
-    make_candidate,
-    make_quest,
-    make_attempt,
+    make_skill,
+    make_user,
 )
 
 
@@ -90,8 +88,8 @@ class TestRecommendationServiceTransitions:
         user = make_user(db)
         rec = make_recommendation(db, user=user, status="presented")
 
-        from app.services.recommendation_service import present_recommendation
         from app.services.exceptions import InvalidTransitionError
+        from app.services.recommendation_service import present_recommendation
         with pytest.raises(InvalidTransitionError):
             present_recommendation(db, recommendation_id=rec.id, user=user)
 
@@ -110,8 +108,8 @@ class TestRecommendationServiceTransitions:
         user = make_user(db)
         rec = make_recommendation(db, user=user, status="accepted")
 
-        from app.services.recommendation_service import reject_recommendation
         from app.services.exceptions import InvalidTransitionError
+        from app.services.recommendation_service import reject_recommendation
         with pytest.raises(InvalidTransitionError):
             reject_recommendation(db, recommendation_id=rec.id, reason=None, user=user)
 
@@ -146,8 +144,8 @@ class TestRecommendationServiceTransitions:
         rec = make_recommendation(db, user=user, status="presented")
         make_candidate(db, recommendation=rec, skill=skill)
 
-        from app.services.recommendation_service import accept_recommendation
         from app.services.exceptions import NotFoundError
+        from app.services.recommendation_service import accept_recommendation
         with pytest.raises(NotFoundError):
             accept_recommendation(
                 db,

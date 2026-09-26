@@ -6,14 +6,14 @@ from __future__ import annotations
 import pytest
 
 from app.services.exceptions import ConflictError, ForbiddenError, ValidationError
-from app.services.feedback_service import submit_feedback, get_feedback_for_attempt
+from app.services.feedback_service import get_feedback_for_attempt, submit_feedback
 from tests.conftest import (
-    make_user,
+    make_attempt,
     make_category,
     make_family,
-    make_skill,
     make_quest,
-    make_attempt,
+    make_skill,
+    make_user,
 )
 
 

@@ -10,23 +10,20 @@ Verifies:
 """
 from __future__ import annotations
 
-import uuid
 from decimal import Decimal
 
 import pytest
 
 from app.models.recommendation import NoveltyCategory, RecommendationStatus
-from app.services.exceptions import ConflictError, NotFoundError
+from app.services.exceptions import ConflictError
 from app.services.recommendation_service import create_recommendation
 from tests.conftest import (
-    make_user,
+    make_attempt,
     make_category,
     make_family,
-    make_skill,
     make_quest,
-    make_attempt,
-    make_recommendation,
-    make_candidate,
+    make_skill,
+    make_user,
 )
 
 
@@ -150,4 +147,4 @@ class TestRecommendationCandidateEligibility:
 
         rec = create_recommendation(db, user=user)
         for candidate in rec.candidates:
-            assert Decimal("0") <= candidate.score <= Decimal("1")
+            assert Decimal(0) <= candidate.score <= Decimal(1)

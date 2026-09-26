@@ -12,14 +12,13 @@ import pytest
 
 from app.services.exceptions import ForbiddenError, NotFoundError
 from tests.conftest import (
-    make_user,
+    make_attempt,
     make_category,
     make_family,
-    make_skill,
     make_quest,
-    make_attempt,
     make_recommendation,
-    make_candidate,
+    make_skill,
+    make_user,
 )
 
 

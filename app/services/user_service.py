@@ -4,15 +4,13 @@ User service: registration, authentication, constraint management.
 from __future__ import annotations
 
 import uuid
-from datetime import UTC, datetime
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.core.security import hash_password, verify_password, create_access_token
+from app.core.security import create_access_token, hash_password, verify_password
 from app.models.user import User, UserConstraints
 from app.services.exceptions import ConflictError, ForbiddenError, NotFoundError
-
 
 # ── Registration / Auth ───────────────────────────────────────────────────────
 

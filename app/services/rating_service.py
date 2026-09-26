@@ -6,17 +6,14 @@ the user's Skill DNA and Category Profiles.
 """
 import uuid
 from decimal import Decimal
-from typing import Sequence
 
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models.rating import Rating
-from app.models.quest import QuestAttempt
 from app.models.dna import SkillDNA, UserCategoryProfile
-from app.models.catalog import Skill, Category, ActivityFamily
+from app.models.quest import QuestAttempt
+from app.models.rating import Rating
 from app.models.user import User
-from app.services.exceptions import NotFoundError, ConflictError
+from app.services.exceptions import ConflictError, NotFoundError
 
 
 def _compute_composite_score(r: Rating) -> Decimal:
