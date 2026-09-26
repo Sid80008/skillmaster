@@ -1,6 +1,11 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1';
+let API_BASE_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
+
+// If they provided just the domain without the /api/v1 path, append it
+if (API_BASE_URL && !API_BASE_URL.endsWith('/api/v1') && !API_BASE_URL.includes('localhost')) {
+    API_BASE_URL = `${API_BASE_URL.replace(/\/$/, '')}/api/v1`;
+}
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,

@@ -49,9 +49,16 @@ def create_app() -> FastAPI:
     )
 
     # ── CORS ──────────────────────────────────────────────────────────────
+    origins = [
+        "http://localhost:5173",
+        "https://skillmaster.vercel.app"
+    ]
+    if settings.frontend_url and settings.frontend_url not in origins:
+        origins.append(settings.frontend_url)
+
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"] if settings.environment == "development" else [settings.frontend_url],
+        allow_origins=["*"] if settings.environment == "development" else origins,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
