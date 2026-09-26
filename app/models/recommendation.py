@@ -256,6 +256,10 @@ class RecommendationCandidate(TimestampMixin, Base):
     )
     skill: Mapped[Skill] = relationship("Skill", lazy="select")  # type: ignore[name-defined]
 
+    @property
+    def skill_name(self) -> str:
+        return self.skill.name if self.skill else "Unknown Skill"
+
     def __repr__(self) -> str:
         return (
             f"<RecommendationCandidate rec={self.recommendation_id}"

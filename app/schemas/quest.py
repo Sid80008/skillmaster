@@ -27,6 +27,8 @@ class QuestAttemptResponse(BaseModel):
     user_id: uuid.UUID
     quest_id: uuid.UUID
     skill_id: uuid.UUID
+    skill_name: str | None = None
+    activity_family_name: str | None = None
     skill_catalog_version: int
     activity_family_id: uuid.UUID
     status: str

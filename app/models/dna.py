@@ -10,7 +10,7 @@ from decimal import Decimal
 from datetime import datetime
 
 from sqlalchemy import ForeignKey, Integer, String, Numeric, CheckConstraint, UniqueConstraint, DateTime
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
 from app.core.database import Base
@@ -63,3 +63,12 @@ class UserCategoryProfile(TimestampMixin, Base):
     __table_args__ = (
         UniqueConstraint("user_id", "category_id", name="uq_ucprofile_user_cat"),
     )
+
+    category: Mapped[Category] = relationship("Category", lazy="select")  # type: ignore[name-defined]
+
+    @property
+    def category_name(self) -> str | None:
+        return self.category.name if self.category else None
+
+# Late imports to break circular refs
+from app.models.catalog import Category  # noqa: E402, F401

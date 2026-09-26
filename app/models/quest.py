@@ -208,6 +208,14 @@ class QuestAttempt(TimestampMixin, Base):
     def can_transition_to(self, next_: QuestAttemptStatus) -> bool:
         return is_valid_quest_attempt_transition(self.status_enum, next_)
 
+    @property
+    def skill_name(self) -> str | None:
+        return self.skill.name if self.skill else None
+
+    @property
+    def activity_family_name(self) -> str | None:
+        return self.activity_family.name if self.activity_family else None
+
     def __repr__(self) -> str:
         return f"<QuestAttempt id={self.id} user={self.user_id} status={self.status!r}>"
 

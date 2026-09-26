@@ -13,6 +13,7 @@ from pydantic import BaseModel, Field
 class RecommendationCandidateResponse(BaseModel):
     id: uuid.UUID
     skill_id: uuid.UUID
+    skill_name: str
     skill_catalog_version: int
     rank: int
     score: Decimal

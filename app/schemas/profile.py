@@ -14,7 +14,11 @@ class SkillDNAResponse(BaseModel):
 
 class UserCategoryProfileResponse(BaseModel):
     category_id: uuid.UUID
+    category_name: str | None = None
     exposure_count: int
+    affinity_score: Decimal
+    fatigue_level: Decimal
+    last_experienced_at: datetime | None
     affinity_score: Decimal
     fatigue_level: Decimal
     last_experienced_at: datetime | None
