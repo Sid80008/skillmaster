@@ -208,6 +208,25 @@ class Skill(TimestampMixin, Base):
     # 1–10 difficulty scale.
     difficulty_level: Mapped[int] = mapped_column(Integer, nullable=False, default=5)
 
+    # ── Rich metadata (Phase 2) ───────────────────────────────────────────
+    # indoor / outdoor / both
+    environment: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    # solo / social / either
+    social_context: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    # low / medium / high
+    physical_demand: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    # free / low / medium / high
+    cost_level: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    # e.g. artifact / performance / knowledge / service / digital
+    output_type: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    # Comma-separated characteristic tags for DNA matching.
+    # e.g. "hands-on,creative,visual,experimental,technical"
+    characteristic_tags: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # e.g. "Visual Arts", "Electronics", etc.
+    subcategory: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    # creative / technical / practical / physical / intellectual / social
+    skill_type: Mapped[str | None] = mapped_column(String(40), nullable=True)
+
     # ── Relationships ─────────────────────────────────────────────────────
     activity_family: Mapped[ActivityFamily] = relationship(
         "ActivityFamily", back_populates="skills"

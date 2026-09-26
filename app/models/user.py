@@ -34,6 +34,16 @@ class User(TimestampMixin, Base):
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     is_verified: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
+    # ── Exploration mode ──────────────────────────────────────────────────
+    # "explore" (default, 95% novelty) | "locked" (LOCK IN — deep dive)
+    exploration_mode: Mapped[str] = mapped_column(
+        String(20), nullable=False, default="explore"
+    )
+    # Whether MIX MODE is currently enabled.
+    mix_mode_enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    # Minimum enjoyment score (1-10) for a skill to qualify for MIX suggestions.
+    mix_threshold: Mapped[int] = mapped_column(Integer, nullable=False, default=8)
+
     # ── Relationships ─────────────────────────────────────────────────────
     constraints: Mapped[UserConstraints | None] = relationship(
         "UserConstraints", back_populates="user", uselist=False, lazy="select"
@@ -47,9 +57,16 @@ class User(TimestampMixin, Base):
     feedbacks: Mapped[list[Feedback]] = relationship(  # type: ignore[name-defined]
         "Feedback", back_populates="user", lazy="dynamic"
     )
+    ratings: Mapped[list[Rating]] = relationship(  # type: ignore[name-defined]
+        "Rating", back_populates="user", lazy="dynamic"
+    )
+
+    @property
+    def is_locked_in(self) -> bool:
+        return self.exploration_mode == "locked"
 
     def __repr__(self) -> str:
-        return f"<User id={self.id} email={self.email!r}>"
+        return f"<User id={self.id} email={self.email!r} mode={self.exploration_mode}>"
 
 
 class UserConstraints(TimestampMixin, Base):

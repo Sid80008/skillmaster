@@ -166,8 +166,14 @@ class QuestAttempt(TimestampMixin, Base):
         nullable=False,
         index=True,
     )
+    
+    # The concrete Challenge selected for this attempt
+    challenge_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("challenges.id", ondelete="SET NULL"), nullable=True
+    )
 
     status: Mapped[str] = mapped_column(
+
         String(20),
         nullable=False,
         default=QuestAttemptStatus.PENDING.value,

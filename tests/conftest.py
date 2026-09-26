@@ -156,6 +156,7 @@ def make_skill(
     difficulty: int = 5,
     physical_tags: str | None = None,
     equipment_tags: str | None = None,
+    **kwargs,
 ) -> Skill:
     slug = slug or f"skill-{_uid()}"
     skill = Skill(
@@ -168,6 +169,7 @@ def make_skill(
         difficulty_level=difficulty,
         physical_restriction_tags=physical_tags,
         required_equipment_tags=equipment_tags,
+        **kwargs
     )
     db.add(skill)
     db.flush()

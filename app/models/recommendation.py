@@ -26,6 +26,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from sqlalchemy import (
+    Boolean,
     CheckConstraint,
     DateTime,
     ForeignKey,
@@ -158,6 +159,17 @@ class Recommendation(TimestampMixin, Base):
     # Human-readable context for why this recommendation was generated
     generation_context: Mapped[str | None] = mapped_column(Text, nullable=True)
     rejection_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+    # ── Phase 2 / MIX ─────────────────────────────────────────────────────
+    is_mix_recommendation: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False
+    )
+    ai_explanation: Mapped[str | None] = mapped_column(Text, nullable=True)
+    confidence_score: Mapped[Decimal | None] = mapped_column(Numeric(4, 3), nullable=True)
+    # The mix candidate ID if this recommendation arose from MIX MODE
+    mix_candidate_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("mix_candidates.id", ondelete="SET NULL"), nullable=True, index=True
+    )
 
     # ── Relationships ─────────────────────────────────────────────────────
     user: Mapped[User] = relationship("User", back_populates="recommendations")  # type: ignore[name-defined]

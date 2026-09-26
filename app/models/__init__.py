@@ -4,3 +4,7 @@ from app.models.catalog import Category, ActivityFamily, Characteristic, Skill, 
 from app.models.quest import Quest, QuestAttempt  # noqa: F401
 from app.models.recommendation import Recommendation, RecommendationCandidate  # noqa: F401
 from app.models.feedback import Feedback  # noqa: F401
+from app.models.challenge import Challenge  # noqa: F401
+from app.models.rating import Rating  # noqa: F401
+from app.models.dna import SkillDNA, UserCategoryProfile  # noqa: F401
+from app.models.lockin import LockInSession, MixCandidate  # noqa: F401

@@ -115,28 +115,48 @@ def _generate_candidates(
         if is_novelty_eligible(category):
             novelty_classified.append((skill, category))
 
-    # Step 5: variety filter — deprioritise skills in recently-experienced families
+    # Step 5: variety filter — pull category profiles for fatigue
+    from app.models.dna import UserCategoryProfile
+    category_profiles = (
+        db.execute(select(UserCategoryProfile).where(UserCategoryProfile.user_id == user.id))
+        .scalars()
+        .all()
+    )
+    fatigue_map = {cp.category_id: float(cp.fatigue_level) for cp in category_profiles}
+    affinity_map = {cp.category_id: float(cp.affinity_score) for cp in category_profiles}
+
     recent_families = get_recent_experienced_family_ids(
         db, user_id=user.id, window=settings.recent_family_window
     )
-    # Build a fatigue penalty: the more recently experienced the family,
-    # the higher the penalty (0.0 = no penalty, 1.0 = maximum penalty).
     family_fatigue: dict[uuid.UUID, float] = {}
     for idx, fam_id in enumerate(recent_families):
-        # Decay: most recent (idx=0) has penalty 1.0, oldest has ~0.
         family_fatigue[fam_id] = 1.0 - (idx / max(len(recent_families), 1))
 
     # Step 6: score and rank
     scored: list[ScoredCandidate] = []
     for skill, category in novelty_classified:
         base_score = novelty_score(category)
-        fatigue_penalty = family_fatigue.get(skill.activity_family_id, 0.0) * 0.3
-        final_score = max(0.0, base_score - fatigue_penalty)
-        explanation = (
-            f"Novelty: {category.value}. "
-            f"Base score: {base_score:.2f}. "
-            f"Fatigue penalty: {fatigue_penalty:.2f}."
-        )
+        
+        # Category fatigue
+        cat_fatigue = fatigue_map.get(skill.activity_family.category_id, 0.0)
+        # Family fatigue (from recent window)
+        fam_fatigue = family_fatigue.get(skill.activity_family_id, 0.0)
+        
+        # If user has locked in, we want depth. If explore (default), we penalize fatigue heavily.
+        if user.is_locked_in:
+            # depth: fatigue is not penalized, maybe even rewarded for the locked skill
+            final_score = base_score
+            explanation = f"LOCK IN Mode. Novelty: {category.value}."
+        else:
+            # explore: apply anti-bubble variety
+            fatigue_penalty = (fam_fatigue * 0.4) + (cat_fatigue * 0.2)
+            final_score = max(0.0, base_score - fatigue_penalty)
+            explanation = (
+                f"Novelty: {category.value}. "
+                f"Base score: {base_score:.2f}. "
+                f"Fatigue penalty: {fatigue_penalty:.2f}."
+            )
+            
         scored.append(
             ScoredCandidate(
                 skill=skill,
