@@ -48,8 +48,8 @@ export const Login = () => {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
-            type="email"
-            placeholder="Email"
+            type="text"
+            placeholder="Email or Username"
             className="w-full px-4 py-3 rounded-xl border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-zinc-50"
             value={email}
             onChange={(e) => setEmail(e.target.value)}

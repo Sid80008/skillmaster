@@ -35,7 +35,6 @@ class Settings(BaseSettings):
 
     # ── Auth / JWT ────────────────────────────────────────────────────────
     secret_key: str = Field(
-        default="CHANGE_ME_use_at_least_32_random_characters_here",
         min_length=32,
         description="JWT signing secret.  Must be at least 32 characters.",
     )
@@ -45,6 +44,7 @@ class Settings(BaseSettings):
     # ── Application ───────────────────────────────────────────────────────
     environment: Literal["development", "testing", "production"] = "development"
     log_level: Literal["debug", "info", "warning", "error"] = "info"
+    frontend_url: str = Field(default="http://localhost:5173")
 
     # ── Recommendation / novelty knobs ────────────────────────────────────
     # Max recommendations generated in a single batch.

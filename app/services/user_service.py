@@ -48,16 +48,19 @@ def register_user(
 
 
 def authenticate_user(db: Session, *, email: str, password: str) -> User:
-    """Return the user matching *email*+*password*.
+    """Return the user matching *email*+*password* (or username).
 
     Raises
     ------
     ForbiddenError
         If credentials are wrong or the user is inactive.
     """
-    user = db.query(User).filter(User.email == email.lower().strip()).first()
+    login_identifier = email.strip()
+    user = db.query(User).filter(
+        (User.email == login_identifier.lower()) | (User.username == login_identifier)
+    ).first()
     if user is None or not verify_password(password, user.hashed_password):
-        raise ForbiddenError("Incorrect email or password.")
+        raise ForbiddenError("Incorrect email/username or password.")
     if not user.is_active:
         raise ForbiddenError("Account is deactivated.")
     return user
