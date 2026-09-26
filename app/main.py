@@ -101,12 +101,17 @@ def create_app() -> FastAPI:
             content={"detail": "An internal error occurred."},
         )
 
-    # ── Routes ────────────────────────────────────────────────────────────
+    from app.api.v1 import auth, history, quests, recommendations, profile, exploration, mix, lockin
+
     prefix = "/api/v1"
     app.include_router(auth.router, prefix=prefix)
     app.include_router(recommendations.router, prefix=prefix)
     app.include_router(quests.router, prefix=prefix)
     app.include_router(history.router, prefix=prefix)
+    app.include_router(profile.router, prefix=prefix)
+    app.include_router(exploration.router, prefix=prefix)
+    app.include_router(mix.router, prefix=prefix)
+    app.include_router(lockin.router, prefix=prefix)
 
     @app.get("/health", tags=["meta"])
     def health() -> dict:

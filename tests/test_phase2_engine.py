@@ -13,7 +13,7 @@ def test_rating_submission_updates_fatigue_and_dna(db):
     quest = make_quest(db, skill=skill)
     attempt = make_attempt(db, user=user, skill=skill, quest=quest, status="completed")
     
-    db.commit()
+    db.flush()
     
     rating = submit_rating(
         db=db,
@@ -70,6 +70,8 @@ def test_fatigue_penalizes_recommendations(db):
     skill3 = make_skill(db, family=fam3)
     
     summary = get_exploration_summary(db, user_id=user.id)
+    from app.core.config import get_settings
+    get_settings().recommendation_batch_size = 1000
     candidates = _generate_candidates(db, user, summary)
     
     # Skill 3 should score higher than Skill 2 because Skill 2 suffers family & category fatigue

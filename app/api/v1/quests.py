@@ -21,7 +21,7 @@ from app.core.database import get_db
 from app.core.deps import get_current_user
 from app.models.quest import QuestAttempt, QuestAttemptStatus
 from app.models.user import User
-from app.schemas.feedback import FeedbackResponse, FeedbackSubmitRequest
+from app.schemas.rating import RatingResponse, RatingSubmitRequest
 from app.schemas.quest import AbandonAttemptRequest, QuestAttemptResponse
 from app.services.exceptions import (
     ConflictError,
@@ -66,6 +66,32 @@ def list_attempts(
         .all()
     )
     return attempts
+
+
+@router.get(
+    "/current",
+    response_model=QuestAttemptResponse | None,
+    summary="Get the user's currently active (or pending) quest attempt",
+)
+def get_current_attempt(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> object:
+    attempt = db.execute(
+        select(QuestAttempt)
+        .where(
+            and_(
+                QuestAttempt.user_id == current_user.id,
+                QuestAttempt.status.in_([QuestAttemptStatus.ACTIVE.value, QuestAttemptStatus.PENDING.value])
+            )
+        )
+        .order_by(
+            (QuestAttempt.status == QuestAttemptStatus.ACTIVE.value).desc(),
+            QuestAttempt.created_at.desc()
+        )
+        .limit(1)
+    ).scalar_one_or_none()
+    return attempt
 
 
 @router.get(
@@ -149,26 +175,30 @@ def abandon_attempt(
 
 @router.post(
     "/attempts/{attempt_id}/feedback",
-    response_model=FeedbackResponse,
+    response_model=RatingResponse,
     status_code=status.HTTP_201_CREATED,
-    summary="Submit feedback for a completed or abandoned quest attempt",
+    summary="Submit multi-dimensional rating for a completed or abandoned quest attempt",
 )
 def post_feedback(
     attempt_id: uuid.UUID,
-    body: FeedbackSubmitRequest,
+    body: RatingSubmitRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> object:
+    from app.services.rating_service import submit_rating
     try:
-        return submit_feedback(
+        return submit_rating(
             db,
             user=current_user,
-            quest_attempt_id=attempt_id,
-            rating=body.rating,
-            enjoyment_score=body.enjoyment_score,
-            notes=body.notes,
-            tags=body.tags,
+            attempt_id=attempt_id,
+            enjoyment=body.enjoyment,
+            curiosity=body.curiosity,
             would_repeat=body.would_repeat,
+            deep_dive_interest=body.deep_dive_interest,
+            pre_interest=body.pre_interest,
+            difficulty_felt=body.difficulty_felt,
+            standout_moment=body.standout_moment,
+            friction_notes=body.friction_notes,
         )
     except NotFoundError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
@@ -180,17 +210,53 @@ def post_feedback(
 
 @router.get(
     "/attempts/{attempt_id}/feedback",
-    response_model=FeedbackResponse | None,
-    summary="Get feedback for a quest attempt",
+    response_model=RatingResponse | None,
+    summary="Get feedback/rating for a quest attempt",
 )
 def get_attempt_feedback(
     attempt_id: uuid.UUID,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> object:
+    from app.models.rating import Rating
+    from app.services.recommendation_service import _get_attempt_for_user
     try:
-        return get_feedback_for_attempt(db, quest_attempt_id=attempt_id, user=current_user)
+        attempt = _get_attempt_for_user(db, attempt_id=attempt_id, user=current_user)
+        rating = db.query(Rating).filter_by(quest_attempt_id=attempt.id).first()
+        return rating
     except NotFoundError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
     except ForbiddenError as exc:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(exc))
+
+
+@router.get(
+    "/attempts/{attempt_id}/challenge",
+    response_model=None, # Will use ChallengeResponse, dynamically imported to avoid circular issues or just imported here
+    summary="Get the concrete weekend Challenge content for an attempt",
+)
+def get_attempt_challenge(
+    attempt_id: uuid.UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> object:
+    from app.schemas.challenge import ChallengeResponse
+    from app.models.challenge import Challenge
+    from app.services.recommendation_service import _get_attempt_for_user
+    try:
+        attempt = _get_attempt_for_user(db, attempt_id=attempt_id, user=current_user)
+        # Attempt might have a hard-linked challenge_id. If not, fallback to the latest active for the skill.
+        if attempt.challenge_id:
+            challenge = db.get(Challenge, attempt.challenge_id)
+        else:
+            challenge = db.query(Challenge).filter_by(skill_id=attempt.skill_id, is_active=True).order_by(Challenge.catalog_version.desc()).first()
+            
+        if not challenge:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Challenge content not found for this skill.")
+            
+        return ChallengeResponse.model_validate(challenge)
+    except NotFoundError as exc:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
+    except ForbiddenError as exc:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(exc))
+
