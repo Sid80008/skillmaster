@@ -225,6 +225,13 @@ def create_recommendation(db: Session, *, user: User) -> Recommendation:
     # Generate candidates
     candidates = _generate_candidates(db, user, summary)
     if not candidates:
+        from app.services.ai_service import generate_quests_for_db
+        # Attempt to dynamically generate more quests
+        inserted = generate_quests_for_db(db, num_quests=2)
+        if inserted > 0:
+            candidates = _generate_candidates(db, user, summary)
+            
+    if not candidates:
         raise NotFoundError(
             "No eligible candidates found. All skills may be constraint-blocked "
             "or already explored."
