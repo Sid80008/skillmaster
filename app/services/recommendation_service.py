@@ -435,10 +435,19 @@ def abandon_quest_attempt(
     reason: str | None,
     user: User,
 ) -> QuestAttempt:
-    """Transition an ACTIVE QuestAttempt to ABANDONED."""
+    """
+    Transition an ACTIVE QuestAttempt to ABANDONED.
+    If the attempt is still PENDING, transition it to CANCELLED instead.
+    """
     attempt = _get_attempt_for_user(db, attempt_id=attempt_id, user=user)
-    _assert_quest_transition(attempt, QuestAttemptStatus.ABANDONED)
-    attempt.status = QuestAttemptStatus.ABANDONED.value
+    
+    if attempt.status == QuestAttemptStatus.PENDING.value:
+        target_status = QuestAttemptStatus.CANCELLED
+    else:
+        target_status = QuestAttemptStatus.ABANDONED
+
+    _assert_quest_transition(attempt, target_status)
+    attempt.status = target_status.value
     attempt.abandoned_at = datetime.now(UTC)
     attempt.abandonment_reason = reason
     db.commit()
