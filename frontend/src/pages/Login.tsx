@@ -59,7 +59,7 @@ export const Login = () => {
           <input
             type={isRegister ? "email" : "text"}
             placeholder={isRegister ? "Email Address" : "Email or Username"}
-            className="w-full px-4 py-3 rounded-xl border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-zinc-50"
+            className="w-full px-4 py-3 rounded-xl border border-black focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-zinc-50"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -68,7 +68,7 @@ export const Login = () => {
             <input
               type="text"
               placeholder="Username"
-              className="w-full px-4 py-3 rounded-xl border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-zinc-50"
+              className="w-full px-4 py-3 rounded-xl border border-black focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-black"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
@@ -77,7 +77,7 @@ export const Login = () => {
           <input
             type="password"
             placeholder="Password"
-            className="w-full px-4 py-3 rounded-xl border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-zinc-50"
+            className="w-full px-4 py-3 rounded-xl border border-black focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-black"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required

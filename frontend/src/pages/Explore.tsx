@@ -163,17 +163,17 @@ export const Explore = () => {
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
                   <button 
                     onClick={() => handleAccept(candidate.skill_id)}
-                    className="flex-1 px-8 py-4 rounded-xl bg-primary-container text-on-primary font-headline-sm font-bold flex items-center justify-center gap-3 transition-all transform active:scale-95 shadow-xl hover:shadow-[0_0_30px_rgba(255,107,53,0.45)]"
+                    className="flex-1 px-4 sm:px-8 py-4 rounded-xl bg-primary-container text-on-primary font-headline-sm font-bold flex items-center justify-center gap-3 transition-all transform active:scale-95 shadow-xl hover:shadow-[0_0_30px_rgba(255,107,53,0.45)] text-center"
                   >
-                    <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>flag</span>
-                    <span>Accept Quest — Reserve This Weekend</span>
+                    <span className="material-symbols-outlined shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>flag</span>
+                    <span>Accept Quest <span className="hidden sm:inline">- Reserve This Weekend</span></span>
                   </button>
                   <button 
                     onClick={handleReject}
-                    className="px-6 py-4 rounded-xl bg-surface-container-highest text-on-surface font-label-lg font-semibold hover:bg-surface-bright transition-all shadow-md flex items-center justify-center gap-2"
+                    className="px-4 sm:px-6 py-4 rounded-xl bg-surface-container-highest text-on-surface font-label-lg font-semibold hover:bg-surface-bright transition-all shadow-md flex items-center justify-center gap-2 shrink-0"
                   >
-                    <span className="material-symbols-outlined text-lg">redo</span>
-                    <span>Not for me / Skip</span>
+                    <span className="material-symbols-outlined text-lg shrink-0">redo</span>
+                    <span>Skip</span>
                   </button>
                 </div>
               </div>

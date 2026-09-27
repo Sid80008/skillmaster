@@ -110,6 +110,21 @@ def _generate_candidates(
     # Step 2: constraint filter
     eligible_skills = filter_eligible_skills(all_skills, user.constraints)
 
+    # Step 2.5: filter out recently rejected skills (top candidate)
+    from datetime import datetime, timedelta, UTC
+    from app.models.recommendation import Recommendation, RecommendationCandidate, RecommendationStatus
+    rejected_cutoff = datetime.now(UTC) - timedelta(days=7)
+    rejected_skills_query = select(RecommendationCandidate.skill_id).join(
+        Recommendation, Recommendation.id == RecommendationCandidate.recommendation_id
+    ).where(
+        Recommendation.user_id == user.id,
+        Recommendation.status == RecommendationStatus.REJECTED.value,
+        Recommendation.created_at >= rejected_cutoff,
+        RecommendationCandidate.rank == 1
+    )
+    rejected_skill_ids = set(db.execute(rejected_skills_query).scalars().all())
+    eligible_skills = [s for s in eligible_skills if s.id not in rejected_skill_ids]
+
     # Step 3 & 4: novelty classification and eligibility gate
     novelty_classified: list[tuple[Skill, NoveltyCategory]] = []
     for skill in eligible_skills:
