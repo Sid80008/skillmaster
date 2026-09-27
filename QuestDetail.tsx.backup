@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { getCurrentQuest, getQuestById, getChallenge, startQuest, completeQuest, abandonQuest, QuestAttempt, Challenge } from '../api/quests';
+import { useNavigate } from 'react-router-dom';
+import { getCurrentQuest, getChallenge, startQuest, completeQuest, abandonQuest, QuestAttempt, Challenge } from '../api/quests';
 
 export const QuestDetail = () => {
   const navigate = useNavigate();
@@ -11,21 +11,14 @@ export const QuestDetail = () => {
   const [elapsedSec, setElapsedSec] = useState(0);
   const [sessionPaused, setSessionPaused] = useState(false);
 
-  const { id } = useParams<{ id: string }>();
-
   const fetchState = async () => {
     try {
       setLoading(true);
-      let targetQuest;
-      if (id) {
-        targetQuest = await getQuestById(id);
-      } else {
-        targetQuest = await getCurrentQuest();
-      }
-      setAttempt(targetQuest);
+      const activeQuest = await getCurrentQuest();
+      setAttempt(activeQuest);
 
-      if (targetQuest) {
-        const chal = await getChallenge(targetQuest.id);
+      if (activeQuest && (activeQuest.status === 'active' || activeQuest.status === 'pending')) {
+        const chal = await getChallenge(activeQuest.id);
         setChallenge(chal);
       }
     } catch (err: any) {
@@ -400,54 +393,35 @@ export const QuestDetail = () => {
         </div>
       </div>
 
-      {attempt.status === "pending" && (
-        <div className="fixed bottom-6 left-0 right-0 z-40 px-6 pointer-events-none">
-          <div className="max-w-4xl mx-auto rounded-2xl bg-surface-container-highest/95 backdrop-blur-xl p-3 sm:p-4 shadow-2xl pointer-events-auto flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-primary-container/20 flex items-center justify-center text-primary-container shrink-0">
-                <span className="material-symbols-outlined text-[24px]">wb_twilight</span>
-              </div>
-              <div className="flex flex-col text-center md:text-left">
-                <span className="font-label-md text-on-surface font-bold">Quest Window Open</span>
-                <span className="font-body-sm text-on-surface-variant hidden sm:inline">Review manifest. Press start when ready.</span>
-              </div>
+      <div className="fixed bottom-6 left-0 right-0 z-40 px-6 pointer-events-none">
+        <div className="max-w-4xl mx-auto rounded-2xl bg-surface-container-highest/95 backdrop-blur-xl p-3 sm:p-4 shadow-2xl pointer-events-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary-container/20 flex items-center justify-center text-primary-container shrink-0">
+              <span className="material-symbols-outlined text-[24px]">wb_twilight</span>
             </div>
-            <div className="flex items-center gap-2 sm:gap-3 shrink-0 w-full md:w-auto">
-              <button 
-                onClick={handleAbandon}
-                className="hidden md:flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-surface-container hover:bg-surface-bright text-on-surface font-label-md transition-all active:scale-95"
-              >
-                <span className="material-symbols-outlined text-[18px]">close</span>
-                <span>Abandon</span>
-              </button>
-              <button 
-                onClick={handleStart}
-                className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-primary-container hover:bg-primary text-on-primary-container font-headline-sm tracking-wide transition-all active:scale-95 shadow-lg font-bold"
-              >
-                <span className="material-symbols-outlined text-[20px]">explore</span>
-                <span>Start Quest Now</span>
-              </button>
+            <div className="flex flex-col text-center md:text-left">
+              <span className="font-label-md text-on-surface font-bold">Quest Window Open</span>
+              <span className="font-body-sm text-on-surface-variant hidden sm:inline">Review manifest. Press start when ready.</span>
             </div>
           </div>
-        </div>
-      )}
-      
-      {attempt.status !== "pending" && attempt.status !== "active" && (
-        <div className="fixed bottom-6 left-0 right-0 z-40 px-6 pointer-events-none">
-          <div className="max-w-4xl mx-auto rounded-2xl bg-surface-container-highest/95 backdrop-blur-xl p-3 sm:p-4 shadow-2xl pointer-events-auto flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center text-on-surface-variant shrink-0">
-                <span className="material-symbols-outlined text-[24px]">history</span>
-              </div>
-              <div className="flex flex-col text-center md:text-left">
-                <span className="font-label-md text-on-surface font-bold">Historical Archive</span>
-                <span className="font-body-sm text-on-surface-variant hidden sm:inline">This quest attempt is {attempt.status}.</span>
-              </div>
-            </div>
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0 w-full md:w-auto">
+            <button 
+              onClick={handleAbandon}
+              className="hidden md:flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-surface-container hover:bg-surface-bright text-on-surface font-label-md transition-all active:scale-95"
+            >
+              <span className="material-symbols-outlined text-[18px]">close</span>
+              <span>Abandon</span>
+            </button>
+            <button 
+              onClick={handleStart}
+              className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-primary-container hover:bg-primary text-on-primary-container font-headline-sm tracking-wide transition-all active:scale-95 shadow-lg font-bold"
+            >
+              <span className="material-symbols-outlined text-[20px]">explore</span>
+              <span>Start Quest Now</span>
+            </button>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
-

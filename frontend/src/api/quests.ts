@@ -48,6 +48,11 @@ export const getCurrentQuest = async () => {
   return data;
 };
 
+export const getQuestById = async (attemptId: string) => {
+  const { data } = await apiClient.get<QuestAttempt>(`/quests/attempts/${attemptId}`);
+  return data;
+};
+
 export const getChallenge = async (attemptId: string) => {
   const { data } = await apiClient.get<Challenge>(`/quests/attempts/${attemptId}/challenge`);
   return data;

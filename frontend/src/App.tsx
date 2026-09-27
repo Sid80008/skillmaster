@@ -47,6 +47,7 @@ const AppRoutes = () => {
       <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
         <Route path="/" element={<Explore />} />
         <Route path="/quest" element={<QuestDetail />} />
+        <Route path="/quest/:id" element={<QuestDetail />} />
         <Route path="/feedback" element={<Feedback />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/history" element={<History />} />
