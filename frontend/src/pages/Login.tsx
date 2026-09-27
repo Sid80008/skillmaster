@@ -23,7 +23,16 @@ export const Login = () => {
       const data = await login(email, password);
       loginToken(data.access_token);
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'An error occurred');
+      let errorMsg = 'An error occurred';
+      if (err.response?.data?.detail) {
+        const detail = err.response.data.detail;
+        if (typeof detail === 'string') {
+          errorMsg = detail;
+        } else if (Array.isArray(detail)) {
+          errorMsg = detail.map((d: any) => d.msg).join(', ');
+        }
+      }
+      setError(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -41,15 +50,15 @@ export const Login = () => {
         </div>
 
         {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-4">
+          <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-4 break-words">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
-            type="text"
-            placeholder="Email or Username"
+            type={isRegister ? "email" : "text"}
+            placeholder={isRegister ? "Email Address" : "Email or Username"}
             className="w-full px-4 py-3 rounded-xl border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-zinc-50"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
