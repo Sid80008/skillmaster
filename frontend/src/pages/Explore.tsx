@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { generateRecommendation, acceptRecommendation, rejectRecommendation, Recommendation } from '../api/recommendations';
+import { generateRecommendation, acceptRecommendation, rejectRecommendation, presentRecommendation, Recommendation } from '../api/recommendations';
 import { getCurrentQuest } from '../api/quests';
 
 export const Explore = () => {
@@ -20,6 +20,10 @@ export const Explore = () => {
       
       const newRec = await generateRecommendation();
       setRec(newRec);
+      
+      if (newRec.status === 'pending') {
+        presentRecommendation(newRec.id).catch(console.error);
+      }
     } catch (err: any) {
       if (err.response?.status === 404) {
         setError("You've explored everything we have for now! Check back later.");

@@ -216,10 +216,8 @@ def create_recommendation(db: Session, *, user: User) -> Recommendation:
     ).scalar_one_or_none()
 
     if existing is not None:
-        raise ConflictError(
-            f"User already has an open recommendation ({existing.id}). "
-            "Resolve it before generating a new one."
-        )
+        # Idempotent return: if they already have an open recommendation, just return it
+        return existing
 
     # Compute exploration summary
     summary = get_exploration_summary(db, user_id=user.id)
