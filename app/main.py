@@ -49,16 +49,20 @@ def create_app() -> FastAPI:
     )
 
     # ── CORS ──────────────────────────────────────────────────────────────
+        # CORS 
     origins = [
         "http://localhost:5173",
-        "https://skillmaster.vercel.app"
+        "http://localhost:3000",
+        "https://skillmaster.vercel.app",
+        "https://skillmaster-theta.vercel.app"
     ]
     if settings.frontend_url and settings.frontend_url not in origins:
         origins.append(settings.frontend_url)
 
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"] if settings.environment == "development" else origins,
+        allow_origins=origins,
+        allow_origin_regex=r"https://.*\.vercel\.app",
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
